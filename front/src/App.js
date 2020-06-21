@@ -28,6 +28,7 @@ function App(props) {
       }
     axios.get(`/mapspoint`, params)
     .then(res => {
+      console.log(res.data)
         setSearchResults(res.data)
     }).catch(ex => {
         console.log(ex);
@@ -105,7 +106,7 @@ function App(props) {
       <Navbar
         className="navbar"
         alignLinks="right"
-        brand={<a className="brand-logo" href="#"><img src="/imgs/logo.png"/></a>}
+        brand={<a className="brand-logo" href="#"><img src="/static/imgs/logo.png"/></a>}
         id="mobile-nav"
         menuIcon={<Icon>menu</Icon>}
         options={{
