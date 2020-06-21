@@ -15,10 +15,10 @@ function App(props) {
   //TODO: removed mocked data
   useEffect(()=>{
     setSearchResults([
-      {"storeId": 1 , "address" : "direccion 1" , "lat":"-34.79498", "long":"145.62293", "maskType" : 1, "quantity": 20 },
-      {"storeId": 2 , "address" : "direccion 2" , "lat":"21.47796", "long":"-13.67654", "maskType" : 2, "quantity": 10 },
-      {"storeId": 1 , "address" : "direccion 1" , "lat":"-34.79498", "long":"145.62293", "maskType" : 3, "quantity": 15 },
-      {"storeId": 3 , "address" : "direccion 3" , "lat":"54.61783", "long":"82.25302", "maskType" : 4, "quantity": 8 },
+      {"_id":1, "storeId": 1 , "address" : "direccion 1" , "lat":"-34.79498", "long":"145.62293", "maskType" : 1, "quantity": 20 },
+      {"_id":2, "storeId": 2 , "address" : "direccion 2" , "lat":"21.47796", "long":"-13.67654", "maskType" : 2, "quantity": 10 },
+      {"_id":3, "storeId": 1 , "address" : "direccion 1" , "lat":"-34.79498", "long":"145.62293", "maskType" : 3, "quantity": 15 },
+      {"_id":4, "storeId": 3 , "address" : "direccion 3" , "lat":"54.61783", "long":"82.25302", "maskType" : 4, "quantity": 8 },
     ])
   }, []);
 
@@ -93,7 +93,7 @@ function App(props) {
           </thead>
           <tbody>
             { searchResults.map((row)=>(
-              <tr>
+              <tr key={row._id}>
                 <td>
                   {row.address}
                 </td>

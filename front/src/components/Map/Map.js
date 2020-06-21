@@ -6,6 +6,10 @@ import './Map.scss';
 
 function MapContainer(props) {
     // TODO: request for key
+    const mockedLocation = {
+        lat:"5.10320",
+        lng:"-54.16757"
+    };
     const stores = {};
     for(let i = 0; i < props.searchResults.length; i++){
         const r = props.searchResults[i];
@@ -34,7 +38,7 @@ function MapContainer(props) {
                 height: '80vh'
                 }}
                 google={props.google} zoom={14}
-                initialCenter={props.location!=null?{lat:props.location.latitude, lng:props.location.longitude}: null}>
+                initialCenter={props.location!=null?{lat:props.location.latitude, lng:props.location.longitude}: mockedLocation}>
                 {
                     props.location!=null?(
                         <Marker title={'Your location'}
