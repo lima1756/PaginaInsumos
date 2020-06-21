@@ -1,49 +1,104 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import 'materialize-css'
-import { Navbar, NavItem, Icon, Table } from 'react-materialize';
+import { Navbar, NavItem, Icon, Table, Button, TextInput } from 'react-materialize';
 import Searchbar from './components/Searchbar/Searchbar';
 import Map from './components/Map/Map';
 import { geolocated } from "react-geolocated";
+import { Marker, InfoWindow } from 'google-maps-react';
+import ModalForm from './components/ModalForm';
+import axios from 'axios';
 import '../node_modules/materialize-css/dist/css/materialize.min.css'
+
 
 
 function App(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [selectedPlace, setSelectedPlace] = useState({});
+  const [activeMarker, setActiveMarker] = useState({});
+  const [showingInfoWindow, setShowingInfoWindow] = useState(true);
+  const [addStoreModal, setAddStoreModal] = useState(false);
 
-  //TODO: removed mocked data
+  const requestData = (area) => {
+    let params = {}
+    if (area!=null)
+      params = {
+        area: area
+      }
+    axios.get(`/mapspoint`, params)
+    .then(res => {
+        setSearchResults(res.data)
+    }).catch(ex => {
+        console.log(ex);
+        setSearchResults([
+          {"_id":1, "storeId": 1 , "address" : "direccion 1" , "lat":"20.685950", "long":"-103.377770", "inventory" : {"maskType": [1],"quantity": [20],"price":[5]} },
+          {"_id":2, "storeId": 2 , "address" : "direccion 2" , "lat":"20.660874", "long":"-103.350021", "inventory" : {"maskType": [1,5],"quantity": [1,2],"price":[1,2]} },
+          {"_id":4, "storeId": 3 , "address" : "direccion 3" , "lat":"20.679046", "long":"-103.371433", "inventory" : {"maskType": [20],"quantity": [100],"price":[200]} },
+        ])
+    })
+  }
   useEffect(()=>{
-    setSearchResults([
-      {"_id":1, "storeId": 1 , "address" : "direccion 1" , "lat":"-34.79498", "long":"145.62293", "maskType" : 1, "quantity": 20 },
-      {"_id":2, "storeId": 2 , "address" : "direccion 2" , "lat":"21.47796", "long":"-13.67654", "maskType" : 2, "quantity": 10 },
-      {"_id":3, "storeId": 1 , "address" : "direccion 1" , "lat":"-34.79498", "long":"145.62293", "maskType" : 3, "quantity": 15 },
-      {"_id":4, "storeId": 3 , "address" : "direccion 3" , "lat":"54.61783", "long":"82.25302", "maskType" : 4, "quantity": 8 },
-    ])
+    requestData();
+    setActiveMarker(userMarker);
+    setShowingInfoWindow(true);
   }, []);
 
-  if(!props.isGeolocationAvailable || !props.isGeolocationEnabled){
-    // TODO: request location
+  const onPlaceClick = (storeId) => {
+    if(storeId === -1){
+      return (_p, _marker, e) => {
+        setSelectedPlace({address:"Your position"});
+        setActiveMarker(userMarker);
+        setShowingInfoWindow(true);
+      }
+    }
+    return (_p, _marker, e) => {
+      const place = stores[storeId+""];
+      console.log(place);
+      setSelectedPlace(place);
+      setActiveMarker(place.marker);
+      setShowingInfoWindow(true);
+    }
   }
 
+  let userMarker = {};
+  if(props.coords){
+    userMarker = <Marker title={'Your location'}
+            name={'YOU'}
+            position={{lat: props.coords.latitude, lng: props.coords.longitude}} onClick={onPlaceClick(-1)}/>;
 
-  const onPlaceClick = (props, marker, e) => {
-    // setState({
-    //   selectedPlace: props,
-    //   activeMarker: marker,
-    //   showingInfoWindow: true
-    // });
+  }
+  else {
+    userMarker = <Marker title={'Your location'}
+            name={'YOU'}
+            position={{lat: 0, lng: 0}} onClick={onPlaceClick(-1)}/>;
   }
 
   const onMapClicked = (props) => {
-    // if state.showingInfoWindow
-    if (false) {
-      // setState({
-      //   showingInfoWindow: false,
-      //   activeMarker: null
-      // })
+    if (showingInfoWindow) {
+      setShowingInfoWindow(false);
     }
   };
+
+  const stores = {};
+  for(let i = 0; i < searchResults.length; i++){
+      const r = searchResults[i];
+      if(!stores[r.storeId]){
+          stores[r.storeId] = {
+              "storeId":  r.storeId,
+              "address" : r.address ,
+              "lat":r.lat,
+              "long":r.long,
+              "maskType" : [r.maskType],
+              "quantity": [r.quantity],
+              "marker": (<Marker key={r.storeId} name={r.address} onClick={onPlaceClick(r.storeId)} position={{lat: r.lat, lng: r.long}}/>)
+          }
+      }
+      else {
+          stores[r.storeId].maskType.push(r.maskType);
+          stores[r.storeId].quantity.push(r.quantity);
+      }
+  }
 
   return (
     <div className="App">
@@ -65,16 +120,17 @@ function App(props) {
           preventScrolling: true
         }}
       >
-        <NavItem href="">
-          Getting started
-        </NavItem>
-        <NavItem href="components.html">
-          Components
+        <NavItem href="#" onClick={()=>{setAddStoreModal(true)}}>
+          Add store
         </NavItem>
       </Navbar>
       <div className="MapContainer">
         <Searchbar setSearchValue={setSearchValue} searchValue={searchValue}/>
-        <Map location={props.coords} searchResults={searchResults}/>
+        <Map location={props.coords} searchResults={searchResults} stores={stores} onMapClicked={onMapClicked}>
+          {Object.keys(stores).map((k)=>stores[k].marker)}
+          {userMarker}
+          <InfoWindow position={{lat: selectedPlace.lat, lng: selectedPlace.long}} visible={showingInfoWindow}><div>{selectedPlace.address}</div> </InfoWindow>
+        </Map>
       </div>
       <div className="results">
         <Table>
@@ -89,19 +145,25 @@ function App(props) {
               <th data-field="price">
                 Qty
               </th>
+              <th data-field="price">
+                Price
+              </th>
             </tr>
           </thead>
           <tbody>
             { searchResults.map((row)=>(
-              <tr key={row._id}>
+              <tr key={row._id} onClick={onPlaceClick(row.storeId)} className="clickable">
                 <td>
                   {row.address}
                 </td>
                 <td>
-                  {row.maskType}
+                  {row.inventory.maskType.reduce((acc, curr)=> acc+", "+curr)}
                 </td>
                 <td>
-                  {row.quantity}
+                  {row.inventory.quantity.reduce((acc, curr)=> acc+", "+curr)}
+                </td>
+                <td>
+                  {row.inventory.price.reduce((acc, curr)=> acc+", "+curr)}
                 </td>
               </tr>
             ))}
@@ -109,6 +171,7 @@ function App(props) {
         </Table>
 
       </div>
+      <ModalForm visible={addStoreModal} setVisible={setAddStoreModal}/>
     </div>
   );
 }

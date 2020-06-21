@@ -1,56 +1,41 @@
-import React, {useState, useEffect} from 'react';
-import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import React, {useState} from 'react';
+import {Map, GoogleApiWrapper} from 'google-maps-react';
+import axios from 'axios';
 
 import './Map.scss';
 
+let key = "";
+axios.get(`/mapspoint`)
+.then(res => {
+    key = res.data.key;
+}).catch(ex => {
+    console.log(ex);
+})
 
 function MapContainer(props) {
-    // TODO: request for key
-    const mockedLocation = {
-        lat:"5.10320",
-        lng:"-54.16757"
-    };
-    const stores = {};
-    for(let i = 0; i < props.searchResults.length; i++){
-        const r = props.searchResults[i];
-        if(!stores[r.storeId]){
-            stores[r.storeId] = {
-                "storeId":  r.storeId,
-                "address" : r.address ,
-                "lat":r.lat,
-                "long":r.long,
-                "maskType" : [r.maskType],
-                "quantity": [r.quantity]
-            }
-        }
-        else {
-            stores[r.storeId].maskType.push(r.maskType);
-            stores[r.storeId].quantity.push(r.quantity);
-        }
-    }
-
-
-
     return(
         <div className="Map">
             <Map style= {{
-                width: '100%',
-                height: '80vh'
-                }}
-                google={props.google} zoom={14}
-                initialCenter={props.location!=null?{lat:props.location.latitude, lng:props.location.longitude}: mockedLocation}>
-                {
-                    props.location!=null?(
-                        <Marker title={'Your location'}
-                            name={'YOU'}
-                            position={{lat: props.location.latitude, lng: props.location.longitude}} />
-                    ):<></>
+                    width: '100%',
+                    height: '80vh'
+                    }}
+                containerStyle = {{
+                    position: 'relative',
+                    width: '100%',
+                    height: '80vh'
+                    }
                 }
+                google={props.google}
+                zoom={14}
+                initialCenter={props.location!=null?{lat:props.location.latitude, lng:props.location.longitude}: {lat:0, lng:0}}
+                onClick={props.onMapClicked}
+            >
+                {props.children}
             </Map>
         </div>
     )
 }
 
 export default GoogleApiWrapper({
-            apiKey: ('')
+            apiKey: (key)
         })(MapContainer);
