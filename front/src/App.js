@@ -26,10 +26,10 @@ function App(props) {
       params = {
         area: area
       }
-    axios.get(`/mapspoint`, params)
+    axios.get(`/stores`, params)
     .then(res => {
       console.log(res.data)
-        setSearchResults(res.data)
+      setSearchResults(res.data)
     }).catch(ex => {
         console.log(ex);
         setSearchResults([
