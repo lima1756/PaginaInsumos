@@ -16,3 +16,20 @@ html, body{
   height:100%;
   background-color: blue;
 }
+
+nav {
+  background-color: #afcbff;
+  color: #0e1c36;
+}
+
+nav .brand-logo{
+  color: #0e1c36;
+}
+
+nav a {
+  color: #0e1c36;
+}
+
+nav ul a {
+  color: #0e1c36;
+}
