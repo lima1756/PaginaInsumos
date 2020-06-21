@@ -105,7 +105,7 @@ function App(props) {
       <Navbar
         className="navbar"
         alignLinks="right"
-        brand={<a className="brand-logo" href="#">Logo</a>}
+        brand={<a className="brand-logo" href="#"><img src="/img/logo.png"/></a>}
         id="mobile-nav"
         menuIcon={<Icon>menu</Icon>}
         options={{
