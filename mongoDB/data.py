@@ -1,6 +1,6 @@
 import pymongo
 import dns
-
+import json
 print("dataing!")
 client = pymongo.MongoClient("mongodb+srv://tec:100@cluster0-rmunm.mongodb.net/dataBase?retryWrites=true&w=majority")
 dataBase = client.insumos
@@ -22,6 +22,6 @@ def quitarTienda(name):
   return stores.delete_one({"_id" : idObject})
 
 def tiendaInfo(name):
-  return stores.find({"storeID": "name"})
+  return json.dump(stores.find({"storeID": "name"}))
 
-
+#def 
