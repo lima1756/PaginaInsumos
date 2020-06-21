@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import 'materialize-css'
-import { Navbar, NavItem, Icon, Table, Button, TextInput } from 'react-materialize';
+import { Navbar, NavItem, Icon, Table } from 'react-materialize';
 import Searchbar from './components/Searchbar/Searchbar';
 import Map from './components/Map/Map';
 import { geolocated } from "react-geolocated";
@@ -16,10 +16,9 @@ function App(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [selectedPlace, setSelectedPlace] = useState({});
-  const [activeMarker, setActiveMarker] = useState({});
   const [showingInfoWindow, setShowingInfoWindow] = useState(true);
   const [addStoreModal, setAddStoreModal] = useState(false);
-
+  const [apiKey, setApiKey] = useState("");
   const requestData = (area) => {
     let params = {}
     if (area!=null)
@@ -41,7 +40,6 @@ function App(props) {
   }
   useEffect(()=>{
     requestData();
-    setActiveMarker(userMarker);
     setShowingInfoWindow(true);
   }, []);
 
@@ -49,7 +47,6 @@ function App(props) {
     if(storeId === -1){
       return (_p, _marker, e) => {
         setSelectedPlace({address:"Your position"});
-        setActiveMarker(userMarker);
         setShowingInfoWindow(true);
       }
     }
@@ -57,7 +54,6 @@ function App(props) {
       const place = stores[storeId+""];
       console.log(place);
       setSelectedPlace(place);
-      setActiveMarker(place.marker);
       setShowingInfoWindow(true);
     }
   }
@@ -127,7 +123,7 @@ function App(props) {
       </Navbar>
       <div className="MapContainer">
         <Searchbar setSearchValue={setSearchValue} searchValue={searchValue}/>
-        <Map location={props.coords} searchResults={searchResults} stores={stores} onMapClicked={onMapClicked}>
+        <Map location={props.coords} searchResults={searchResults} stores={stores} onMapClicked={onMapClicked} apiKey={apiKey}>
           {Object.keys(stores).map((k)=>stores[k].marker)}
           {userMarker}
           <InfoWindow position={{lat: selectedPlace.lat, lng: selectedPlace.long}} visible={showingInfoWindow}><div>{selectedPlace.address}</div> </InfoWindow>

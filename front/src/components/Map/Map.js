@@ -1,16 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Map, GoogleApiWrapper} from 'google-maps-react';
 import axios from 'axios';
 
 import './Map.scss';
-
-let key = "";
-axios.get(`/mapspoint`)
-.then(res => {
-    key = res.data.key;
-}).catch(ex => {
-    console.log(ex);
-})
 
 function MapContainer(props) {
     return(
@@ -36,6 +28,21 @@ function MapContainer(props) {
     )
 }
 
-export default GoogleApiWrapper({
-            apiKey: (key)
-        })(MapContainer);
+export default GoogleApiWrapper(
+        async (props) => {
+            console.log(props);
+            try{
+                let a = await axios.get(`/mapspoint`).data.key;
+                console.log(a);
+                return {
+                    apiKey: a,
+                }
+            }
+            catch(ex){
+                return {
+                    apiKey: "",
+                }
+            }
+
+        }
+    )(MapContainer);
