@@ -4,6 +4,7 @@ import 'materialize-css'
 import { Navbar, NavItem, Icon } from 'react-materialize';
 import Searchbar from './components/Searchbar/Searchbar';
 import Map from './components/Map/Map';
+import '../node_modules/materialize-css/dist/css/materialize.min.css'
 
 
 function App() {
