@@ -17,19 +17,19 @@ html, body{
   background-color: blue;
 }
 
-nav {
+.navbar {
   background-color: #afcbff;
   color: #0e1c36;
 }
 
-nav .brand-logo{
+.navbar .brand-logo{
   color: #0e1c36;
 }
 
-nav a {
+.navbar a {
   color: #0e1c36;
 }
 
-nav ul a {
+.navbar ul a {
   color: #0e1c36;
 }
