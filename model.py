@@ -6,21 +6,21 @@ url2 = "https://maps.googleapis.com/maps/api/place/textsearch/json?"
 url = 'https://maps.googleapis.com/maps/api/geocode/json?'
 api_key = "AIzaSyDS4huY82BgxX3GobtVBHnOWMhQn5vSeZ0"
 #https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyDS4huY82BgxX3GobtVBHnOWMhQn5vSeZ0
+#https://maps.googleapis.com/maps/api/place/textsearch/json?query=farmacias+near+zapopan&key=AIzaSyDS4huY82BgxX3GobtVBHnOWMhQn5vSeZ0
 
 def nearStores(api_key):
   nearStores = []
   names = []
-  query = 'farmacias near zapopan'
+  query = "farmacias+near+zapopan"
   request = requests.get(url2 + 'query=' + query + '&key=' + api_key)
   listRequest = request.json()
   results = listRequest['results']
-  print(results)
   for i in range(len(results)):
     names.append(results[i]["name"])
-  print(names)
   for name in names:
-    x = data.stores.find({"storeId": name})
-    nearStores.append(x)
+    x = data.stores.find_one({"storeId": name})
+    if(x!=None):
+      nearStores.append(x)
   return nearStores
 
 def getCordenates (name, api_key):

@@ -1,5 +1,5 @@
 from mongoDB import data
-import model
+#import model
 
 print("asdfghjAv ")
 inventory = [["sketchers","nikoni"],["211","31"],["10","999"]]
